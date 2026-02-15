@@ -9,6 +9,31 @@ let alunos = JSON.parse(localStorage.getItem("alunos")) || [];
 
 let alunoSelecionado = null;
 
+// Turma (ano + turma) — persistida no localStorage
+let TURMA = JSON.parse(localStorage.getItem('turma')) || { ano: '2°', turma: 'B' };
+
+function atualizarTituloTurma() {
+    const selectAno = document.getElementById('selectAno');
+    const selectTurma = document.getElementById('selectTurma');
+    if (selectAno && selectTurma) {
+        TURMA.ano = selectAno.value;
+        TURMA.turma = selectTurma.value;
+        localStorage.setItem('turma', JSON.stringify(TURMA));
+    }
+    const titulo = document.getElementById('tituloTurma');
+    if (titulo) {
+        titulo.innerText = `Combinados da Sala - ${TURMA.ano} ${TURMA.turma}`;
+    }
+}
+
+function inicializarTurma() {
+    const selectAno = document.getElementById('selectAno');
+    const selectTurma = document.getElementById('selectTurma');
+    if (selectAno) selectAno.value = TURMA.ano || '2°';
+    if (selectTurma) selectTurma.value = TURMA.turma || 'B';
+    atualizarTituloTurma();
+}
+
 // Garantir que cada aluno tenha um histórico e migrar dados antigos
 alunos = alunos.map(aluno => {
     if (!Array.isArray(aluno.historico)) {
@@ -398,3 +423,4 @@ function salvarCombinadoFromForm() {
 renderizarAlunos();
 renderizarRanking();
 renderizarCombinados();
+inicializarTurma();
