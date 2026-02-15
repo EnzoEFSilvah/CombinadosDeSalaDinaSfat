@@ -2,44 +2,10 @@
 const XP_PARA_LEVEL_UP = 100;
 
 // COMBINADOS(Regras) - Editável e salvo no localStorage
-let COMBINADOS = JSON.parse(localStorage.getItem("combinados")) || [
-    {id:1, texto: "Fez a tarefa de casa", xp: 20, tipo: "bom"},
-    {id:2, texto: "Ajudou um colega", xp: 10, tipo: "bom"},
-    {id:3, texto: "Jogar o lixo na lixeira", xp: 10, tipo: "bom"},
-    {id:4, texto: "Andar em Fila", xp: 10, tipo: "bom"},
-    {id:5, texto: "Ser Educado", xp: 10, tipo: "bom"},
-    {id:6, texto: "Conversa fora de hora", xp: 10, tipo: "ruim"},
-    {id:7, texto: "Não fez a tarefa de casa", xp: 20, tipo: "ruim"},
-    {id:8, texto: "Brigou um colega", xp: 10, tipo: "ruim"},
-    {id:9, texto: "Saiu sem pedir", xp: 15, tipo: "ruim"},
-    {id:10, texto: "Não trouxe o Material", xp: 20, tipo: "ruim"},
-];
+let COMBINADOS = JSON.parse(localStorage.getItem("combinados")) || [];
 
 // Estado da Aplicação
-let alunos = JSON.parse(localStorage.getItem("alunos")) || [
-    {id:1, nome: "Alice", xp: 0, level: 1, genero:"F"},
-    {id:2, nome: "Alexsandro", xp: 0, level: 1, genero:"M"},
-    {id:3, nome: "Ana Clara", xp: 0, level: 1, genero:"F"},
-    {id:4, nome: "Arthur", xp: 0, level: 1, genero:"M"},
-    {id:5, nome: "Carlito", xp: 0, level: 1, genero:"M"},
-    {id:6, nome: "Dominic", xp: 0, level: 1, genero:"M"},
-    {id:7, nome: "Edson", xp: 0, level: 1, genero:"M"},
-    {id:8, nome: "Estevan", xp: 0, level: 1, genero:"M"},
-    {id:9, nome: "Gregory", xp: 0, level: 1, genero:"M"},
-    {id:10, nome: "Kimberly", xp: 0, level: 1, genero:"F"},
-    {id:11, nome: "Lays", xp: 0, level: 1, genero:"F"},
-    {id:12, nome: "Layslla", xp: 0, level: 1, genero:"F"},
-    {id:13, nome: "Luis", xp: 0, level: 1, genero:"M"},
-    {id:14, nome: "Matheus", xp: 0, level: 1, genero:"M"},
-    {id:15, nome: "Murillo", xp: 0, level: 1, genero:"M"},
-    {id:16, nome: "Ryan", xp: 0, level: 1, genero:"M"},
-    {id:17, nome: "Sophia", xp: 0, level: 1, genero:"F"},
-    {id:18, nome: "Valentina", xp: 0, level: 1, genero:"F"},
-    {id:19, nome: "Victor", xp: 0, level: 1, genero:"M"},
-    {id:20, nome: "Vitorya", xp: 0, level: 1, genero:"F"},
-    {id:21, nome: "Weiny", xp: 0, level: 1, genero:"F"},
-    {id:22, nome: "Yohanna", xp: 0, level: 1, genero:"F"},
-];
+let alunos = JSON.parse(localStorage.getItem("alunos")) || [];
 
 let alunoSelecionado = null;
 
@@ -77,7 +43,12 @@ function renderizarAlunos() {
     const grind = document.getElementById("gridAlunos");
     grind.innerHTML = "";
 
-    alunos.forEach(aluno => {
+    // Ordena os alunos por nome (alfabético, sensível a acentos em pt-BR)
+    const alunosOrdenados = [...alunos].sort((a, b) =>
+        (a.nome || '').localeCompare((b.nome || ''), 'pt-BR', { sensitivity: 'base' })
+    );
+
+    alunosOrdenados.forEach(aluno => {
         // Calculo da % da barra de progresso
         const porcentagem = (aluno.xp / XP_PARA_LEVEL_UP) * 100;
 
@@ -329,7 +300,6 @@ function editarAluno(id) {
     const aluno = alunos.find(a => a.id === id);
     if (!aluno) return;
     
-    document.getElementById('modalAluno').style.dataset_edit_id = id;
     document.getElementById('inputNomeAluno').value = aluno.nome;
     document.getElementById('inputXPAluno').value = aluno.xp;
     document.getElementById('inputLevelAluno').value = aluno.level;
