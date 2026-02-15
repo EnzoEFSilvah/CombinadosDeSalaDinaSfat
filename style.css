@@ -398,6 +398,62 @@ h1 {
         width: 480px;
     }
 
+
+/* Responsividade: ajustes para telas menores (tablets e celulares) */
+@media (max-width: 900px) {
+    .container-principal {
+        flex-direction: column;
+        gap: 18px;
+        padding: 0 12px;
+    }
+
+    .sidebar {
+        flex-direction: row;
+        gap: 12px;
+        align-items: flex-start;
+        overflow-x: auto;
+        width: 100%;
+    }
+
+    .card-ranking, .card-combinados {
+        min-width: unset;
+        width: 100%;
+        flex: none;
+    }
+
+    .grid-alunos {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 16px;
+    }
+
+    .admin-panel { width: 100%; padding: 8px; }
+    .turma-selector { margin-left: auto; }
+}
+
+@media (max-width: 600px) {
+    h1 { font-size: 1.1rem; margin-bottom: 14px; }
+
+    .grid-alunos { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+    .card-aluno { padding: 12px; padding-right: 40px; margin-top: 8px; }
+
+    .avatar { width: 64px; height: 64px; }
+    .avatar-buttons { right: -38px; }
+
+    .turma-selector { padding: 6px 8px; border-radius: 10px; }
+    .turma-selector label { display: none; }
+
+    .btn-admin { padding: 8px 10px; font-size: 0.85rem; border-radius: 6px; }
+
+    .modal-content { max-width: 92%; padding: 18px; }
+    #modalAluno .modal-content, #modalCombinado .modal-content { width: 95%; }
+}
+
+@media (max-width: 360px) {
+    .grid-alunos { grid-template-columns: 1fr; }
+    .avatar { width: 56px; height: 56px; }
+    .level-badge { font-size: 0.65em; padding: 3px 6px; }
+}
 }
 
 /* Botão de ação pequeno no card do aluno */
