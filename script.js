@@ -117,16 +117,16 @@ function renderizarRanking() {
 
     // Filtra apenas alunos com XP > 0, ordena por XP + (level * XP_PARA_LEVEL_UP) e pega os 5 primeiros
     const top5 = [...alunos]
-        .filter(a => a.xp > 0)
-        .sort((a, b) => {
-            const xpTotalA = a.xp + (a.level * XP_PARA_LEVEL_UP);
-            const xpTotalB = b.xp + (b.level * XP_PARA_LEVEL_UP);
-            return xpTotalB - xpTotalA;
-        })
+        .map(a => ({
+            ...a,
+            xpTotal: ( (a.level - 1) * XP_PARA_LEVEL_UP ) + (a.xp || 0)
+        }))
+        .filter(a => a.xpTotal > 0)
+        .sort((a, b) => b.xpTotal - a.xpTotal)
         .slice(0, 5);
 
     top5.forEach((aluno, index) => {
-        const xpTotal = aluno.xp + (aluno.level * XP_PARA_LEVEL_UP);
+        const xpTotal = aluno.xpTotal !== undefined ? aluno.xpTotal : ((aluno.level - 1) * XP_PARA_LEVEL_UP + (aluno.xp || 0));
         const posicao = index + 1;
         let medalha = '';
         let classe = '';
