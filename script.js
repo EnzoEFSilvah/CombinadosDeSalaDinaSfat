@@ -168,9 +168,36 @@ function renderizarCombinados() {
         item.innerHTML = `
             <span class="combinado-texto">${comb.texto}</span>
             <span class="combinado-xp ${comb.tipo}">${sinal}${comb.xp} XP</span>
+            <div class="combinado-actions">
+                <button class="btn-edit" onclick="editarCombinado(${comb.id})" title="Editar">✏️</button>
+                <button class="btn-delete" onclick="deletarCombinado(${comb.id})" title="Deletar">🗑️</button>
+            </div>
         `;
         combinadosList.appendChild(item);
     });
+}
+
+// Editar / Deletar combinados
+function editarCombinado(id) {
+    const comb = COMBINADOS.find(c => c.id === id);
+    if (!comb) return;
+
+    document.getElementById('inputTextoCombinado').value = comb.texto;
+    document.getElementById('inputXPCombinado').value = comb.xp;
+    document.getElementById('inputTipoCombinado').value = comb.tipo;
+
+    const modal = document.getElementById('modalCombinado');
+    modal.dataset.editId = id;
+    modal.querySelector('.modal-title').innerText = 'Editar Combinado';
+    modal.style.display = 'flex';
+}
+
+function deletarCombinado(id) {
+    const comb = COMBINADOS.find(c => c.id === id);
+    if (!comb) return;
+    if (!confirm(`Confirma excluir o combinado "${comb.texto}"? Esta ação não pode ser desfeita.`)) return;
+    COMBINADOS = COMBINADOS.filter(c => c.id !== id);
+    salvarDados();
 }
 
 function abrirModal(id) {
@@ -382,12 +409,20 @@ function salvarAlunoFromForm() {
         // Modo editar - atualizar aluno existente
         const index = alunos.findIndex(a => a.id === parseInt(editId, 10));
         if (index !== -1) {
-            alunos[index] = {id: alunos[index].id, nome: nome, xp: xp, level: level, genero: genero};
+            // Atualiza o aluno mantendo histórico atualizado a partir dos valores informados
+            const total = (level - 1) * XP_PARA_LEVEL_UP + xp;
+            const registroInicial = { id: Date.now() + Math.floor(Math.random()*1000), valor: total, texto: 'Atualizado', timestamp: new Date().toISOString() };
+            alunos[index] = { id: alunos[index].id, nome: nome, xp: xp, level: level, genero: genero, historico: [registroInicial] };
+            recomputarAlunoPorHistorico(alunos[index]);
         }
     } else {
         // Modo adicionar - novo aluno
         const novoId = Date.now();
-        alunos.push({id: novoId, nome: nome, xp: xp, level: level, genero: genero});
+        const total = (level - 1) * XP_PARA_LEVEL_UP + xp;
+        const historico = total > 0 ? [{ id: Date.now() + Math.floor(Math.random()*1000), valor: total, texto: 'Inicial', timestamp: new Date().toISOString() }] : [];
+        const novoAluno = { id: novoId, nome: nome, xp: xp, level: level, genero: genero, historico: historico };
+        recomputarAlunoPorHistorico(novoAluno);
+        alunos.push(novoAluno);
     }
     
     salvarDados();
@@ -399,6 +434,10 @@ function abrirFormCombinado() {
     document.getElementById('inputTextoCombinado').value = '';
     document.getElementById('inputXPCombinado').value = 10;
     document.getElementById('inputTipoCombinado').value = 'bom';
+    // reseta modo editar
+    const modal = document.getElementById('modalCombinado');
+    modal.dataset.editId = '';
+    modal.querySelector('.modal-title').innerText = 'Adicionar Combinado';
     document.getElementById('modalCombinado').style.display = 'flex';
 }
 
@@ -413,8 +452,19 @@ function salvarCombinadoFromForm() {
 
     if (!texto) { alert('Texto é obrigatório.'); return; }
 
-    const novoId = Date.now();
-    COMBINADOS.push({id: novoId, texto: texto, xp: xp, tipo: tipo});
+    const modal = document.getElementById('modalCombinado');
+    const editId = modal.dataset.editId;
+
+    if (editId) {
+        const idx = COMBINADOS.findIndex(c => c.id === parseInt(editId, 10));
+        if (idx !== -1) {
+            COMBINADOS[idx] = { id: COMBINADOS[idx].id, texto: texto, xp: xp, tipo: tipo };
+        }
+    } else {
+        const novoId = Date.now();
+        COMBINADOS.push({ id: novoId, texto: texto, xp: xp, tipo: tipo });
+    }
+
     salvarDados();
     fecharModalCombinado();
 }

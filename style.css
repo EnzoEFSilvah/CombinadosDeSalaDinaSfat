@@ -146,7 +146,7 @@ h1 {
     padding: 10px;
     border-radius: 6px;
     display: flex;
-    justify-content: space-between;
+    gap: 8px;
     align-items: center;
     font-size: 0.9rem;
     border-left: 3px solid transparent;
@@ -164,6 +164,37 @@ h1 {
     flex: 1;
     font-weight: 500;
 }
+
+.combinado-texto {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.combinado-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.combinado-actions .btn-edit,
+.combinado-actions .btn-delete {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    padding: 0;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255,255,255,0.06);
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s, background-color 0.15s;
+}
+
+.combinado-actions .btn-edit:hover { transform: scale(1.05); background-color: rgba(46, 204, 113, 0.2); }
+.combinado-actions .btn-delete:hover { transform: scale(1.05); background-color: rgba(231, 76, 60, 0.2); }
 
 .combinado-xp {
     font-family: 'Press Start 2P', cursive;
